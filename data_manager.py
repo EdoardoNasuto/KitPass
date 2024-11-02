@@ -7,7 +7,8 @@ import hashlib
 
 from pathlib import Path
 from cryptography.fernet import Fernet
-from androidstorage4kivy import ShareSheet, SharedStorage
+if kivy.platform == 'android':
+    from androidstorage4kivy import ShareSheet, SharedStorage
 
 
 class DataManager:
