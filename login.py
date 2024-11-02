@@ -1,15 +1,14 @@
 import re
-import time
 import kivy
 import hashlib
 
 from kivymd.app import MDApp
-from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 from kivy.core.window import Window
 
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.screenmanager import Screen
 
 from data_manager import DataManager
 
@@ -118,25 +117,13 @@ class LoginScreen(Screen):
             root.destroy()
 
         else:
-            from kivymd.uix.filemanager import MDFileManager
+            from androidstorage4kivy import Chooser, SharedStorage
 
-            self.file_manager = MDFileManager(
-                exit_manager=self.exit_manager, select_path=self.select_path)
+            def chooser_callback(shared_file_list):
+                kivy.Logger.warning('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
 
-            # Remplacez par le chemin initial souhaité
-            from jnius import autoclass
-            Environment = autoclass('android.os.Environment')
-            path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()
-            self.file_manager.show(path)
-
-    def select_path(self, path):
-        if path.lower().endswith(".json"):
-            self.data_manager.import_data(path)
-            self.show_popup("Info", "Import successful")
-        else:
-            self.show_popup("Error", "Json field is required")
-        self.file_manager.close()
+            chooser = Chooser(chooser_callback)
+            chooser.choose_content('*/*')
 
     def exit_manager(self, path):
         self.file_manager.close()
@@ -163,11 +150,8 @@ class LoginScreen(Screen):
                     root.destroy()
                     self.show_popup("Info", "Export successful")
             elif kivy.platform == 'android':
-                file = self.data_manager.export_data("data.json")
-                from androidstorage4kivy import SharedStorage
-                time.sleep(2)
-                self.show_popup(
-                    "Info", "Success", SharedStorage().delete_shared(file))
+                self.data_manager.export_data("data.json")
+                self.show_popup("Info", "Export successful")
 
     def reset_data(self):
         master_password = self.ids.master_password.text

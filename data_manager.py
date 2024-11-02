@@ -1,10 +1,13 @@
 import os
+import kivy
 import json
 import shutil
 import base64
 import hashlib
+
 from pathlib import Path
 from cryptography.fernet import Fernet
+from androidstorage4kivy import ShareSheet, SharedStorage
 
 
 class DataManager:
@@ -16,10 +19,11 @@ class DataManager:
         self.salt_dict = {}
 
         # Determine the data directory path based on the platform
-        if os.name == 'posix':  # iOS and Android use POSIX paths
+        if kivy.platform == 'android':
+            from android.storage import app_storage_path
             # Use internal app storage directory
-            self.data_dir = Path("Kitpass")
-        elif os.name == 'nt':  # Windows
+            self.data_dir = Path(app_storage_path())
+        elif kivy.platform == 'win':
             self.data_dir = Path(os.getenv("APPDATA")) / "Kitpass"
         else:
             raise NotImplementedError("Platform not supported")
@@ -126,39 +130,25 @@ class DataManager:
         """
         data_json = self.data_dir / "data.json"
 
-        if os.name == 'nt':
+        if kivy.platform == 'win':
             # Créez le chemin complet du fichier d'exportation
             export_file_path = os.path.join(download_path, filename)
             # Utilisez shutil.copy pour copier le fichier data.json
             shutil.copy(str(data_json), export_file_path)
 
-        # if os.name == 'posix':
-            from androidstorage4kivy import ShareSheet, SharedStorage
-
-            # Lisez le contenu du fichier data.json
-            with open(data_json, "r") as f:
-                data_content = f.read()
-
-            # Créez un fichier dans le répertoire de cache avec le contenu
-            filename = os.path.join(
-                SharedStorage().get_cache_dir(), 'data.json')
-            with open(filename, "w") as f:
-                f.write(data_content)
-
+        if kivy.platform == 'android':
             # Insérez le fichier dans le stockage partagé de l'application
-            file = SharedStorage().copy_to_shared(filename)
-            ShareSheet().share_file(file)
-            return file
+            file_uri = SharedStorage().copy_to_shared(str(data_json))
+            ShareSheet().share_file(file_uri)
 
     def import_data(self, source_file):
         destination_path = self.data_dir / "data.json"
-        if os.name == 'nt':
+        if kivy.platform == 'win':
             try:
                 shutil.move(source_file, destination_path)
             except FileNotFoundError:
                 shutil.copy(source_file, destination_path)
-        # if os.name == 'posix':
-            from androidstorage4kivy import SharedStorage
+        if kivy.platform == 'android':
 
             # Lisez le contenu du fichier data.json
             with open(destination_path, "r") as f:
