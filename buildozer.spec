@@ -37,7 +37,7 @@ version = 1.0
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,pyjnius,cryptography,kivymd,androidstorage4kivy
+requirements = python3, kivy==2.2.1, pyjnius, cryptography, https://github.com/kivymd/KivyMD/archive/1.1.1.zip, androidstorage4kivy
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
