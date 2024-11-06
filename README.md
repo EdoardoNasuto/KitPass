@@ -10,6 +10,7 @@ KitPass is a 100% open-source password manager designed to ensure the security a
 - [Packaging](#packaging)
   - [For Android](#packaging-for-android)
   - [For Windows](#packaging-for-windows)
+- [Roadmap](#roadmap)
 - [Contribution](#contribution)
 - [License](#license)
 
@@ -85,36 +86,16 @@ To create an executable for Windows, PyInstaller is used with a `.spec` file.
 
 This will generate an executable you can use for installation on Windows systems.
 
+## Roadmap
+
+The roadmap for KitPass outlines the future features and improvements planned for the project. You can view the upcoming goals and milestones to better understand the evolution of the app.  
+Check out the full roadmap [here](ROADMAP.md).
+
 ## Contribution
 
-KitPass is an open-source project, and contributions are welcome! If you have feature ideas or would like to report a bug, feel free to open an issue or submit a pull request on our GitHub repository.
-
-### Commit Conventions
-
-To keep the Git history clean and consistent, please follow these commit conventions:
-
-1. **Structure**: Begin each commit message with a type, followed by a short description of the change.
-   ```
-   <type>: <short description>
-   ```
-
-2. **Types**:
-    - **feat**: Use for new features.
-    - **fix**: Use for bug fixes.
-    - **docs**: Documentation-only changes.
-    - **style**: Changes that do not affect the code’s logic (formatting, indentation, etc.).
-    - **refactor**: Code changes that neither fix a bug nor add a feature.
-    - **perf**: Changes that improve performance.
-    - **test**: Adding or modifying tests.
-    - **chore**: Minor changes, like dependency updates.
-
-### Examples
-
-- `feat: add export data feature`
-- `fix: resolve crash on Android 11`
-- `docs: update README with commit conventions`
-- `style: reformat code for readability`
-- `refactor: simplify import/export functions`
+KitPass is an open-source project, and contributions are welcome! If you have feature ideas, bug reports, or just want to help improve the project, feel free to open an issue or submit a pull request on our GitHub repository.  
+For more details on how to contribute, please refer to our contribution guidelines.  
+Start contributing by visiting the contribution file [here](CONTRIBUTING.md).
 
 ## License
 
