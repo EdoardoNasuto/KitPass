@@ -7,8 +7,8 @@ from kivymd import hooks_path as kivymd_hooks_path
 
 
 a = Analysis(
-    ['main.py'],
-    pathex=[],
+    ['../../main.py'],
+    pathex=['..'],
     binaries=[],
     datas=[],
     hiddenimports=['win32timezone'],
@@ -43,5 +43,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.png'],
+    icon=['../../assets/icons/icon.png'],
 )

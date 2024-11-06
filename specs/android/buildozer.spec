@@ -10,7 +10,7 @@ package.name = Kitpass
 package.domain = org.Kitpass
 
 # (str) Source code where the main.py live
-source.dir = .
+source.dir = ../../
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas
@@ -44,10 +44,10 @@ requirements = python3, kivy==2.2.1, pyjnius, cryptography, https://github.com/k
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = presplash.png
+presplash.filename = ../../assets/images/presplash.png
 
 # (str) Icon of the application
-icon.filename = icon.png
+icon.filename = ../../assets/icons/icon.png
 
 # (list) Supported orientations
 # Valid options are: landscape, portrait, portrait-reverse or landscape-reverse

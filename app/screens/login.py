@@ -10,7 +10,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
-from data_manager import DataManager
+from app.utils.data_manager import DataManager
 
 Builder.load_string("""
 <LoginScreen>:

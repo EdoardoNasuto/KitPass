@@ -4,8 +4,8 @@ from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.screenmanager import ScreenManager
 
-from login import LoginScreen
-from generator import GeneratorScreen
+from app.screens.login import LoginScreen
+from app.screens.generator import GeneratorScreen
 
 
 class RootManager(MDBoxLayout):

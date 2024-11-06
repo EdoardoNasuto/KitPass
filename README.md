@@ -27,7 +27,7 @@ KitPass was created to address growing concerns about the security of personal d
 
 ## Screenshot
 
-![KitPass Screenshot](screenshot.png)  
+![KitPass Screenshot](assets/images/screenshot.png)
 *Illustration of the KitPass interface*
 
 ## Packaging
@@ -57,12 +57,16 @@ KitPass can be packaged for Android using Buildozer.
 3. **Create an Android package (Debug):**
 
     ```bash
+    cd specs
+    cd android
     buildozer -v android debug
     ```
 
 4. **Create an Android package (Release):**
 
     ```bash
+    cd specs
+    cd android
     buildozer android release
     ```
 
@@ -81,7 +85,7 @@ To create an executable for Windows, PyInstaller is used with a `.spec` file.
 1. **Create the Windows executable:**
 
     ```bash
-    pyinstaller Kitpass.spec
+    pyinstaller specs/windows/Kitpass.spec
     ```
 
 This will generate an executable you can use for installation on Windows systems.
