@@ -36,6 +36,20 @@ KitPass was created to address growing concerns about the security of personal d
 
 KitPass can be packaged for Android using Buildozer.
 
+0. **Prepare the KitPass Project Folder**
+
+    Before starting, make sure all necessary KitPass files are in a single folder. Then compress this folder into a .zip file (e.g., KitPass.zip) to easily transfer it into the Colab environment.
+
+    To extract the contents of the .zip file in Colab, run the following code:
+
+    ```bash
+    import zipfile
+    import os
+
+    with zipfile.ZipFile("KitPass.zip", 'r') as zip_ref:
+        zip_ref.extractall("/content")
+    ```
+
 1. **Install necessary dependencies:**
 
     ```bash
@@ -54,23 +68,31 @@ KitPass can be packaged for Android using Buildozer.
     cd ..
     ```
 
-3. **Create an Android package (Debug):**
+3. **Create an Android package :**
+
+    Navigate to the Android project directory:
 
     ```bash
+    cd kitpass
     cd specs
     cd android
-    buildozer -v android debug
     ```
 
-4. **Create an Android package (Release):**
+    Then, depending on the version you want to create:
 
-    ```bash
-    cd specs
-    cd android
-    buildozer android release
-    ```
+    1. **For a debug version:**
 
-5. **Debugging on Android with ADB:**
+        ```bash
+        buildozer -v android debug
+        ```
+
+    2. **For a production-ready release version:**
+
+        ```bash
+        buildozer android release
+        ```
+
+4. **Debugging on Android with ADB:**
 
    To view live logs when testing on an Android device, use the command:
 
