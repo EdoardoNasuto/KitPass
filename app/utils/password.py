@@ -23,7 +23,7 @@ class PasswordGenerator:
         self.key = self._derive_key()
         del (self.master_password)
 
-    def generate(self, special_characters: bool, lowercases: bool, uppercases: bool, digits: bool) -> str:
+    def generate(self, special_characters: bool, lowercases: bool, uppercases: bool, digits: bool, excluded_characters: str) -> str:
         """
         Generates a secure password based on the initialized parameters and character set options.
 
@@ -41,7 +41,7 @@ class PasswordGenerator:
             "ascii_lowercase": lowercases,
             "ascii_uppercase": uppercases,
             "digits": digits
-        })
+        }, excluded_characters)
 
         password = self._generate_initial_password(char_types)
         password = self._extend_password(password, char_types)
@@ -65,17 +65,18 @@ class PasswordGenerator:
             "sha512", combined_data, base_key, 100000)
         return int.from_bytes(derived_key, "big")
 
-    def _character_set(self, params: Dict[str, bool]) -> Dict[str, str]:
+    def _character_set(self, params: Dict[str, bool], exclude: str) -> Dict[str, str]:
         """
-        Generates a dictionary of character sets based on the specified flags.
+        Generates a dictionary of character sets based on the specified flags, excluding specific characters.
 
         Args:
             params (Dict[str, bool]): Flags for including specific character sets (e.g., digits, lowercase).
+            exclude (str): A string of characters to exclude from the result. Defaults to ''.
 
         Returns:
-            Dict[str, str]: A dictionary of character sets from the `string` module.
+            Dict[str, str]: A dictionary of character sets from the `string` module, excluding specified characters.
         """
-        return {name: getattr(string, name) for name, include in params.items() if include}
+        return {name: ''.join(c for c in getattr(string, name) if c not in exclude) for name, include in params.items() if include}
 
     def _generate_initial_password(self, char_types: Dict[str, str]) -> str:
         """

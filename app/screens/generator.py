@@ -74,6 +74,13 @@ Builder.load_string("""
             icon_left: "numeric"
             active: True
 
+        MDTextField:
+            id: excluded_characters
+            hint_text: "Excluded Characters"
+            size_hint_y: root.chip_height
+            icon_left: "close-circle"
+            mode: "round"
+
         MDLabel:
             size_hint_y: root.label_height
 
@@ -148,6 +155,7 @@ class GeneratorScreen(Screen):
         domain = self.ids.domain.text
         username = self.ids.username.text
         length = self.ids.password_length.text
+        excluded_characters = self.ids.excluded_characters.text
         if not master_password:
             self.show_popup("Error", "Please enter the Master Password.")
             return
@@ -181,7 +189,7 @@ class GeneratorScreen(Screen):
             self.data_manager.salt_dict[domain] = salt
 
         password = PasswordGenerator(
-            master_password, username, domain, length, salt).generate(*checkbox_states)
+            master_password, username, domain, length, salt).generate(*checkbox_states, excluded_characters)
         Clipboard.copy(password)
         self.show_popup("Password Copied", "The password has been copied!")
         self.data_manager.save_data(master_password)
