@@ -3,9 +3,9 @@
 ## Version 1.0.0 : Essential and fundamental features
 - [x] **Dataset Reset**: Enable users to reset all stored data to a blank state.
 - [x] **Dataset Export**: Provide an option to export the dataset for secure local backup.
+- [ ] **Enhanced Password Generator**: Improve the password generator.
 - [ ] **Dataset Import**: Implement functionality to import previously saved datasets.
 - [ ] **First Password**: Setup guide users through creating a secure master password on first use.
-- [ ] **Enhanced Password Generator**: Improve the password generator.
 
 ## Version 1.1.0 : Personalization and improvement of the user experience
 

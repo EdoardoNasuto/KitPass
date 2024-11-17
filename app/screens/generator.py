@@ -1,4 +1,4 @@
-import secrets
+from secrets import token_hex
 
 from kivy.lang import Builder
 from kivy.core.window import Window
@@ -8,7 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
-from app.utils.password import password_generator
+from app.utils.password import PasswordGenerator
 from app.utils.data_manager import DataManager
 
 Builder.load_string("""
@@ -44,31 +44,35 @@ Builder.load_string("""
 
         MDChip:
             id: special_character
-            text: "Special Character"
+            text: "Special Characters"
             size_hint_x: 1
             size_hint_y: root.chip_height
             icon_left: "pound"
+            active: True
 
         MDChip:
             id: remove_digits
-            text: "Remove Digits"
+            text: "Lowercases"
             size_hint_x: 1
             size_hint_y: root.chip_height
             icon_left: "numeric-off"
+            active: True
 
         MDChip:
             id: remove_uppercase
-            text: "Remove Uppercase"
+            text: "Uppercases"
             size_hint_x: 1
             size_hint_y: root.chip_height
             icon_left: "alpha-a"
+            active: True
 
         MDChip:
             id: digits_only
-            text: "Digits Only"
+            text: "Digits"
             size_hint_x: 1
             size_hint_y: root.chip_height
             icon_left: "numeric"
+            active: True
 
         MDLabel:
             size_hint_y: root.label_height
@@ -122,7 +126,7 @@ class GeneratorScreen(Screen):
             self.ids.username.text = ""
             self.ids.password_length.text = ""
             for checkbox_state in self.checkbox_list:
-                checkbox_state.active = False
+                checkbox_state.active = True
 
     def generate_new_salt(self):
         domain = self.ids.domain.text
@@ -134,7 +138,7 @@ class GeneratorScreen(Screen):
             self.show_popup("Error", "Password never been created")
             return
 
-        new_salt = secrets.token_hex(32)
+        new_salt = token_hex(64)
         self.data_manager.salt_dict[domain] = new_salt
         self.show_popup(
             "New Password", "A new password has been generated for this domain.")
@@ -173,11 +177,11 @@ class GeneratorScreen(Screen):
         if domain in self.data_manager.salt_dict:
             salt = self.data_manager.salt_dict[domain]
         else:
-            salt = secrets.token_hex(32)
+            salt = token_hex(64)
             self.data_manager.salt_dict[domain] = salt
 
-        password = password_generator(
-            master_password, username, domain, length, salt, *checkbox_states)
+        password = PasswordGenerator(
+            master_password, username, domain, length, salt).generate(*checkbox_states)
         Clipboard.copy(password)
         self.show_popup("Password Copied", "The password has been copied!")
         self.data_manager.save_data(master_password)
