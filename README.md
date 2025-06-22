@@ -1,129 +1,81 @@
-# KitPass
+# Kitpass app
 
-KitPass is a 100% open-source password manager designed to ensure the security and privacy of your data. All information is stored locally on your device, and the app operates entirely offline for complete peace of mind.
+## Run the app
 
-## Table of Contents
+### uv
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Screenshot](#screenshot)
-- [Packaging](#packaging)
-  - [For Android](#packaging-for-android)
-  - [For Windows](#packaging-for-windows)
-- [Roadmap](#roadmap)
-- [Contribution](#contribution)
-- [License](#license)
+Run as a desktop app:
 
-## Introduction
+```
+uv run flet run
+```
 
-KitPass was created to address growing concerns about the security of personal data. Unlike many password managers that rely on cloud servers, KitPass ensures that all your sensitive information remains on your device, accessible only to you.
+Run as a web app:
 
-## Features
+```
+uv run flet run --web
+```
 
-- **Offline storage**: KitPass works entirely offline, meaning no data is ever sent to external servers or stored in the cloud.
-- **Local encryption**: All passwords are securely stored on your device, encrypted with industry-standard algorithms.
-- **Data export and import**: Easily back up or restore your data locally for maximum security.
-- **Easy to use**: An intuitive, lightweight interface for quick and secure access to your information.
+### Poetry
 
-## Screenshot
+Install dependencies from `pyproject.toml`:
 
-![KitPass Screenshot](assets/images/screenshot.png)
-*Illustration of the KitPass interface*
+```
+poetry install
+```
 
-## Packaging
+Run as a desktop app:
 
-### Packaging for Android
+```
+poetry run flet run
+```
 
-KitPass can be packaged for Android using Buildozer.
+Run as a web app:
 
-0. **Prepare the KitPass Project Folder**
+```
+poetry run flet run --web
+```
 
-    Before starting, make sure all necessary KitPass files are in a single folder. Then compress this folder into a .zip file (e.g., KitPass.zip) to easily transfer it into the Colab environment.
+For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
 
-    To extract the contents of the .zip file in Colab, run the following code:
+## Build the app
 
-    ```bash
-    import zipfile
-    import os
+### Android
 
-    with zipfile.ZipFile("KitPass.zip", 'r') as zip_ref:
-        zip_ref.extractall("/content")
-    ```
+```
+flet build apk -v
+```
 
-1. **Install necessary dependencies:**
+For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
 
-    ```bash
-    sudo apt update
-    sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-    pip3 install --user --upgrade Cython==0.29.33 virtualenv KivyMD==1.1.1
-    ```
+### iOS
 
-2. **Clone and install Buildozer:**
+```
+flet build ipa -v
+```
 
-    ```bash
-    git clone https://github.com/kivy/buildozer
-    cd buildozer
-    python setup.py build
-    pip install -e .
-    cd ..
-    ```
+For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
 
-3. **Create an Android package :**
+### macOS
 
-    Navigate to the Android project directory:
+```
+flet build macos -v
+```
 
-    ```bash
-    cd kitpass
-    cd specs
-    cd android
-    ```
+For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
 
-    Then, depending on the version you want to create:
+### Linux
 
-    1. **For a debug version:**
+```
+flet build linux -v
+```
 
-        ```bash
-        buildozer -v android debug
-        ```
+For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
 
-    2. **For a production-ready release version:**
+### Windows
 
-        ```bash
-        buildozer android release
-        ```
+```
+flet build windows -v
+```
 
-4. **Debugging on Android with ADB:**
-
-   To view live logs when testing on an Android device, use the command:
-
-    ```bash
-    adb logcat
-    ```
-
-### Packaging for Windows
-
-To create an executable for Windows, PyInstaller is used with a `.spec` file.
-
-1. **Create the Windows executable:**
-
-    ```bash
-    pyinstaller specs/windows/Kitpass.spec
-    ```
-
-This will generate an executable you can use for installation on Windows systems.
-
-## Roadmap
-
-The roadmap for KitPass outlines the future features and improvements planned for the project. You can view the upcoming goals and milestones to better understand the evolution of the app.  
-Check out the full roadmap [here](ROADMAP.md).
-
-## Contribution
-
-KitPass is an open-source project, and contributions are welcome! If you have feature ideas, bug reports, or just want to help improve the project, feel free to open an issue or submit a pull request on our GitHub repository.  
-For more details on how to contribute, please refer to our contribution guidelines.  
-Start contributing by visiting the contribution file [here](CONTRIBUTING.md).
-
-## License
-
-KitPass is distributed under the GPL-3.0 license.  
-This project uses the [cryptography](https://cryptography.io/) library under the [Apache 2.0](https://github.com/pyca/cryptography/blob/main/LICENSE.APACHE) license.
+For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
