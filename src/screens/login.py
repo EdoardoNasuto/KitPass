@@ -1,166 +1,127 @@
 import re
-import kivy
 import hashlib
 
-from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivy.core.window import Window
+import flet as ft
 
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
-
-from app.utils.data_manager import DataManager
-
-Builder.load_string("""
-<LoginScreen>:
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: "5dp"
-        padding: "20dp"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-        
-        MDBoxLayout:
-            orientation: 'horizontal'
-            spacing: "5dp"
-
-            MDRectangleFlatButton:
-                text: "Import data"
-                on_release: root.import_data()
-                size_hint_x: 0.5
-                font_size: "12sp"
-
-            MDRectangleFlatButton:
-                text: "Export data"
-                on_release: root.export_data()
-                size_hint_x: 0.5
-                font_size: "12sp"
-
-        MDTextField:
-            id: master_password
-            hint_text: "Master Password"
-            password: True
-            icon_right: "key-variant"
-            mode: "fill"
-            size_hint_x: 1
-
-        MDRectangleFlatButton:
-            id: valide_password
-            text: "Validate Password"
-            on_release: root.password_validate()
-            size_hint_x: 1
-        
-        MDRectangleFlatButton:
-            id: reset_data
-            text: "Reset Data"
-            on_release: root.reset_data()
-            size_hint_x: 1
-""")
+from routes import Routes
+from utils.data_manager import DataManager
 
 
-class LoginScreen(Screen):
-    def __init__(self, **kwargs):
-        super(LoginScreen, self).__init__(**kwargs)
-
+class LoginScreen():
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
         self.data_manager = DataManager()
 
+    def build(self):
+        self.file_picker = ft.FilePicker(on_result=self.file_picker_result)
+        self.page.overlay.append(self.file_picker)
+
+        self.master_password = ft.Ref[ft.TextField]()
+
+        self.snack_bar = ft.Ref[ft.SnackBar]()
+        self.snack_bar_text = ft.Ref[ft.Text]()
+
+        return ft.View(
+            route=Routes.LOGIN.value,
+            spacing=10,
+            padding=20,
+            vertical_alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+
+            controls=[
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=10,
+                    controls=[
+                        ft.ElevatedButton(
+                            text="Import data", on_click=lambda _: self.import_data(), width=150
+                        ),
+                        ft.ElevatedButton(
+                            text="Export data", on_click=lambda _: self.export_data(), width=150
+                        )
+                    ],
+                ),
+                ft.TextField(
+                    ref=self.master_password,
+                    label="Master Password",
+                    password=True,
+                    icon=ft.Icons.KEY,
+                ),
+                ft.ElevatedButton(
+                    text="Validate Password", on_click=lambda _: self.password_validate()
+                ),
+                ft.ElevatedButton(
+                    text="Reset Data", on_click=lambda _: self.reset_data()
+                ),
+
+                ft.SnackBar(ref=self.snack_bar, content=ft.Text(
+                    ref=self.snack_bar_text, value="")),
+            ],
+        )
+
     def password_validate(self):
-        master_password = self.ids.master_password.text
+        master_password = self.master_password.current.value
         valid = True
 
         if len(master_password) < 8:
             valid = False
-            self.show_popup(
-                "Error", "Master password must be at least 8 characters long.")
+            self.show_snackbar(
+                "Master password must be at least 8 characters long.")
 
-        if valid and not re.match(r"^(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\d)(?=.*[A-Z])", master_password):
+        if valid == True and not re.match(r"^(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\d)(?=.*[A-Z])", master_password):
             valid = False
-            self.show_popup(
-                "Error", "Master password must contain at least one special character, one digit, and one uppercase letter.")
+            self.show_snackbar(
+                "Master password must contain at least one special character, one digit, and one uppercase letter.")
 
-        if valid:
+        if valid == True:
             key = hashlib.pbkdf2_hmac(
                 "sha256", master_password.encode("utf-8"), b"", 100000)
             del (master_password)
             if self.data_manager.load_data(key) is None:
                 valid = False
-                self.show_popup(
-                    "Error", "Failed to validate the master password.")
+                self.show_snackbar("Failed to validate the master password.")
             else:
-                app = MDApp.get_running_app()
-                app.root.screen_manager.current = "generator"
-                generator_screen = app.root.screen_manager.get_screen(
-                    "generator")
-                generator_screen.key = key
+                self.page.go(Routes.GENERATOR.value)
+                self.page.session.set("key", key)
 
-    def show_popup(self, title, message, dismiss=None):
-        text = Label(text=message, halign='center', valign='middle', text_size=(
-            Window.width * 0.8, None))
-        popup = Popup(title=title, content=text, size_hint=(0.9, 0.25))
-        if dismiss:
-            popup.bind(on_dismiss=dismiss)
-        popup.open()
+    def show_snackbar(self, message):
+        self.snack_bar_text.current.value = message
+        self.snack_bar.current.open = True
+        self.page.update()
 
     def import_data(self):
-        if kivy.platform == 'win':
-            import tkinter as tk
-            from tkinter import filedialog
-            root = tk.Tk()
-            root.withdraw()
-
-            file_path = filedialog.askopenfilename()
-            if file_path:
-                if file_path.lower().endswith(".json"):
-                    self.data_manager.import_data(file_path)
-                    self.show_popup("Info", "Import successful")
-
-            root.destroy()
-
-        else:
-            from androidstorage4kivy import Chooser, SharedStorage
-
-            def chooser_callback(shared_file_list):
-                kivy.Logger.warning('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
-
-            chooser = Chooser(chooser_callback)
-            chooser.choose_content('*/*')
-
-    def exit_manager(self, path):
-        self.file_manager.close()
+        self.importing = True
+        self.file_picker.pick_files(allowed_extensions=["json"])
 
     def export_data(self):
-        master_password = self.ids.master_password.text
+        master_password = self.master_password.current.value
         key = hashlib.pbkdf2_hmac(
             "sha256", master_password.encode("utf-8"), b"", 100000)
         del (master_password)
         if self.data_manager.load_data(key) is None:
-            self.show_popup(
-                "Error", "Failed to validate the master password.")
+            self.show_snackbar("Failed to validate the master password.")
         else:
-            if kivy.platform == 'win':
-                import tkinter as tk
-                from tkinter import filedialog
-                root = tk.Tk()
-                root.withdraw()
+            self.importing = False
+            self.file_picker.get_directory_path()
 
-                file_path = filedialog.askdirectory()
-                print(file_path)
-                if file_path:
-                    self.data_manager.export_data("data.json", file_path)
-                    root.destroy()
-                    self.show_popup("Info", "Export successful")
-            elif kivy.platform == 'android':
-                self.data_manager.export_data("data.json")
-                self.show_popup("Info", "Export successful")
+    def file_picker_result(self, e: ft.FilePickerResultEvent):
+        if self.importing:
+            if e.files and e.files[0].name.endswith(".json"):
+                self.data_manager.import_data(e.files[0].path)
+                self.show_snackbar("Import successful.")
+        else:
+            if e.path:
+                self.data_manager.export_data("data.json", e.path)
+                self.show_snackbar("Export successful.")
 
     def reset_data(self):
-        master_password = self.ids.master_password.text
+        master_password = self.master_password.value
         key = hashlib.pbkdf2_hmac(
             "sha256", master_password.encode("utf-8"), b"", 100000)
         del (master_password)
         if self.data_manager.load_data(key) is None:
-            self.show_popup(
-                "Error", "Failed to validate the master password.")
+            self.show_snackbar("Failed to validate the master password.")
         else:
             self.data_manager.reset_data("data.json")
-            self.show_popup("Info", "Reset data successful")
+            self.show_snackbar("Reset data successful.")

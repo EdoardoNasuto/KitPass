@@ -1,13 +1,13 @@
 import os
-import kivy
 import json
 import shutil
 import base64
 import hashlib
+import platform
 
 from pathlib import Path
 from cryptography.fernet import Fernet
-if kivy.platform == 'android':
+if platform.system() == 'android':
     from androidstorage4kivy import ShareSheet, SharedStorage
 
 
@@ -20,11 +20,11 @@ class DataManager:
         self.salt_dict = {}
 
         # Determine the data directory path based on the platform
-        if kivy.platform == 'android':
+        if platform.system() == 'Android':
             from android.storage import app_storage_path
             # Use internal app storage directory
             self.data_dir = Path(app_storage_path())
-        elif kivy.platform == 'win':
+        elif platform.system() == 'Windows':
             self.data_dir = Path(os.getenv("APPDATA")) / "Kitpass"
         else:
             raise NotImplementedError("Platform not supported")
@@ -131,25 +131,25 @@ class DataManager:
         """
         data_json = self.data_dir / "data.json"
 
-        if kivy.platform == 'win':
+        if platform.system() == 'Windows':
             # Créez le chemin complet du fichier d'exportation
             export_file_path = os.path.join(download_path, filename)
             # Utilisez shutil.copy pour copier le fichier data.json
             shutil.copy(str(data_json), export_file_path)
 
-        if kivy.platform == 'android':
+        if platform.system() == 'Android':
             # Insérez le fichier dans le stockage partagé de l'application
             file_uri = SharedStorage().copy_to_shared(str(data_json))
             ShareSheet().share_file(file_uri)
 
     def import_data(self, source_file):
         destination_path = self.data_dir / "data.json"
-        if kivy.platform == 'win':
+        if platform.system() == 'Windows':
             try:
                 shutil.move(source_file, destination_path)
             except FileNotFoundError:
                 shutil.copy(source_file, destination_path)
-        if kivy.platform == 'android':
+        if platform.system() == 'Android':
 
             # Lisez le contenu du fichier data.json
             with open(destination_path, "r") as f:
